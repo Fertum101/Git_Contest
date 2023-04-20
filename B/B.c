@@ -26,16 +26,35 @@ int Pop(Stack *S )
 int main()
 {
     // Initialization of variables and stack
-    int N;
+    int N, res = 0;
     Stack impasse;
     impasse.size = 0;
 
-    // Entering the number of wagons and initializing strings with wagons and their number
-    scanf("%d", &N);
+    // Entering the number of wagons and initializing strings with wagons and their number and input validation
+    do
+    {
+        res = scanf("%d",&N); 
+        fflush(stdin);
+        if (res != 1) printf("Number input Error. Try again.\n");
+    }
+    while(res != 1);
+    fflush(stdin);
+
     int first_way[N], second_way[N], first_len = N-1, second_len = 0;
 
     // Filling in the line for the first track with wagon numbers
-    for (int i = 0; i < N; i++) scanf("%d", &first_way[i]);
+    for (int i = 0; i < N; i++) 
+    {
+        // Input validation
+        do
+        {
+            res = scanf("%d", &first_way[i]); 
+            fflush(stdin);
+            if (res != 1) printf("Number input Error. Try again.\n");
+        }
+        while(res != 1);
+        fflush(stdin);
+    }
 
     // Adding the first coach to the impasse
     Push(&impasse, first_way[0]);
