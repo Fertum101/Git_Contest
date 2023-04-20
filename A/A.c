@@ -5,14 +5,39 @@
 int main()
 {
     // Initialization of variables and bracket count in the buffer
-    int N, count = 0; 
-    scanf("%d", &N);
+    int N, count = 0, res = 0; 
+
+    // Input validation
+    do
+    {
+        res = scanf("%d",&N); 
+        fflush(stdin);
+        if (res != 1) printf("Number input Error. Try again.\n");
+    }
+    while(res != 1);
     fflush(stdin);
 
     // Creating string for brackets and buffer string
-    char S[N], buff[N];    
-    gets(S);
+    char S[N], buff[N];
 
+    // Checking the correct input of brackets
+    do
+    {
+        res = 1;
+        gets(S);
+        fflush(stdin);
+        for (int i = 0; i < N; i++)
+        {
+            if ((S[i] != '(') && (S[i] != ')') && (S[i] != '[') && (S[i] != ']') && (S[i] != '{')  && (S[i] !='}'))
+            {
+                printf("Parentheses input error. Try again.\n");
+                res = 0;
+                break;
+            }
+        }
+    } while (res != 1);
+
+    
     // If the number of brackets is odd, then by definition the expression cannot be obtained
     if (N % 2 != 0) {printf("No"); return 0;}
 
