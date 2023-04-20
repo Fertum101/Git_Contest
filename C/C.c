@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define MAXSIZE 10000
+#define MAXSIZE 100
 
 // Stack initialization
 typedef struct {
-    double data[MAXSIZE];
+    int data[MAXSIZE];
     int size;
 } Stack; 
 
 // Add function initialization elements on the stack
-void Push(Stack *S, double x )
+void Push(Stack *S, int x )
 {
     S->data[S->size] = x;
     S->size ++;
@@ -25,81 +25,60 @@ int Pop(Stack *S )
 
 int main()
 {
-    // Initialize and enter the number of lines
-    int N = 0;
-    scanf("%d", &N);
-    
-    // Create an array whith arrays that contains the boxes on the conveyor and ther count
-    double **conveyor = (double**)malloc(N*sizeof(double*));
-    for (int i = 0; i < N; i++) conveyor[i] = (double*)malloc(MAXSIZE*sizeof(double));
+    // Initialization of variables and stack
+    int N, res = 0;
+    Stack impasse;
+    impasse.size = 0;
 
-    // Populate the array with conveyor boxes
-    for (int i = 0; i < N; i++)
+    // Entering the number of wagons and initializing strings with wagons and their number and input validation
+    do
     {
-        int K; 
-        scanf("%d", &K);
-        conveyor[i][0] = (double)K; //The first element of each array stores the number of boxes
-        
-        // Filling the boxes of the current conveyor with priority numbers from the end
-        for (int j = K; j > 0; j--)
-        {
-            scanf("%lf", &conveyor[i][j]);
-            printf("conveyor[%d][%d] =  %lf\n", i, j, conveyor[i][j]);
-        }   
+        res = scanf("%d",&N); 
+        fflush(stdin);
+        if (res != 1) printf("Number input Error. Try again.\n");
     }
+    while(res != 1);
+    fflush(stdin);
 
+    int first_way[N], second_way[N], first_len = N-1, second_len = 0;
 
-    for (int i = 0; i < N; i++)
+    // Filling in the line for the first track with wagon numbers
+    for (int i = 0; i < N; i++) 
     {
-        // initialization of the stack for storing information about the boxes in the storage and getting the number of boxes on the current conveyor
-        Stack storage;
-        storage.size =  0;
-        int conveyor_len = (int)conveyor[i][0];
-        
-        while (1)
+        // Input validation
+        do
         {
-            double min = conveyor[i][1];
-
-            // If there are no boxes in the storage and the conveyor is not empty, we look for the minimum element on the conveyor, and if it is the first on the way, we send it to the workshop, otherwise, to the storage
-            if (!storage.size && conveyor_len != 0)
-            {
-                for (int j = 1; j <= conveyor_len; j++) if (min > conveyor[i][j]) min = conveyor[i][j];
-
-                if (min == conveyor[i][conveyor_len]) conveyor_len--;
-                else {Push(&storage, conveyor[i][conveyor_len]); conveyor_len--;}
-                
-            }
-            else if (storage.size && conveyor_len != 0) // If the storage and pipeline are not empty - look for the minimum elements in both arrays and compare them and their positions
-            {
-                for (int j = 1; j <= conveyor_len; j++) if (min > conveyor[i][j]) min = conveyor[i][j];
-
-                double min_store = storage.data[0];
-                for (int j = 0; j < storage.size; j++) if (min_store > storage.data[j]) min_store = storage.data[j]; 
-
-                if (min > min_store)
-                {
-                    if (min_store == storage.data[storage.size-1]) Pop(&storage); // If the minimum element is the first in the storage, we send it to the workshop. If it is impossible to send the minimum element to the workshop, we break the loop
-                    else break;
-                }
-                else if (min == conveyor[i][conveyor_len]) conveyor_len--; // If the minimum element is in the first place on the conveyor, we send it to the workshop, otherwise - to the storage
-                else {Push(&storage, conveyor[i][conveyor_len]); conveyor_len--;}
-            }
-            else if (storage.size && !conveyor_len) // If the elements are left only in the storage - check its first element for compliance with the minimum 
-            {
-                double min_store = storage.data[0];
-
-                for (int j = 0; j < storage.size; j++) if (min_store > storage.data[j]) min_store = storage.data[j];
-
-                if (min_store == storage.data[storage.size-1]) Pop(&storage); // // If the element is minimal, we send it to the workshop, otherwise we break the loop
-                else break;
-            } else break;
-
+            res = scanf("%d", &first_way[i]); 
+            fflush(stdin);
+            if (res != 1) printf("Number input Error. Try again.\n");
         }
-
-        // If there are no elements anywhere else - print 1, otherwise - print 0
-        if (!storage.size && !conveyor_len) printf("1\n");
-        else printf("0\n");
+        while(res != 1);
+        fflush(stdin);
     }
 
+    // Adding the first coach to the impasse
+    Push(&impasse, first_way[0]);
+
+    // Until the second path is filled, we execute the loop
+    while(second_len != N)
+    {
+        // If the next coach number we need is in the first place in a impasse, we move it to a impasse
+        if (second_len + 1 == impasse.data[impasse.size-1])
+        {
+            second_way[second_len] = Pop(&impasse);
+            second_len++;
+        } 
+        else if (first_len == 0) break; // If we cannot rearrange the coach from the impasse and there are no more coaches on the first track, we interrupt the loop
+        else // Otherwise, we bring a coach from the first path to a impasse
+        {
+            Push(&impasse, first_way[N - first_len]);
+            first_len--;
+        }
+    }
+
+    // If all the cars are at a dead end - we output yes, otherwise - no
+    if (second_len == N) printf("Yes");
+    else printf("No");
+    
     return 0;
 }
