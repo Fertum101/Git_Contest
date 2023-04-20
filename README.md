@@ -1,0 +1,1 @@
+In this repository, in folders with the names of tasks, files with solutions for the 6th contest are stored. Files and folders are named according to the tasks they belong to.
