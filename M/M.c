@@ -7,6 +7,7 @@ typedef struct Node {
     struct Node* right;
 } Node;
 
+// Функция для создания нового узла дерева
 Node* createNode(int value) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->value = value;
@@ -15,6 +16,7 @@ Node* createNode(int value) {
     return newNode;
 }
 
+// Функция для вставки элемента в дерево
 Node* insert(Node* root, int value) {
     if (root == NULL) return createNode(value);
 
@@ -27,6 +29,7 @@ Node* insert(Node* root, int value) {
     return root;
 }
 
+// Функция для определения высоты дерева
 int height(Node* root) {
     if (root == NULL) return 0;
 
@@ -37,6 +40,7 @@ int height(Node* root) {
     else return(rightHeight + 1);  
 }
 
+// Функция для проверки сбалансированности дерева
 int isBalanced(Node* root) {
     if (root == NULL) return 1;
 
@@ -52,12 +56,14 @@ int main() {
     int value;
     Node* root = NULL;
 
+    // Чтение входных данных и построение дерева
     scanf("%d", &value);
     while (value != 0) {
         root = insert(root, value);
         scanf("%d", &value);
     }
 
+    // Проверка сбалансированности и вывод результата
     if (isBalanced(root)) printf("YES\n");
     else printf("NO\n");
 
